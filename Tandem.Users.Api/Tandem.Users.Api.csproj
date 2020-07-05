@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>52ccabaa-144d-42e4-bf4d-d1997c3ef980</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/8d176f43-3d0a-4182-a8ab-58f10ad118c4/resourcegroups/tandem-user-api-rg/providers/Microsoft.Insights/components/Tandem.Users.Api</ApplicationInsightsResourceId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
+  </ItemGroup>
+
+</Project>

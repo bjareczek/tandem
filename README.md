@@ -28,18 +28,11 @@ GET Notes (userId, phone, email)
 
 	URL will be:
 		
-		GET /tandem/api/v1/users/{id}/notes
-		
-		NOTE:  if we were going to filter the notes a little more, I would probably use a query string at this point like so:
-		
-			GET /tandem/api/v1/users/{id}/notes?search={searchText}
-			
-		For a more sophisticated search, I might suggest a POST
+		GET /tandem/api/v1/users/{id}
 			
 	Possible response codes will be:
 	
 		200 - Ok
-		204 - User exists, but no notes
 		400 - Bad request (verify we have proper payload and required data points)
 		404 - Not Found (if no user for user id parameter)
 		500 - Internal Error
@@ -53,7 +46,10 @@ GET cosmos health check
 		500 - Internal Error
 		
 	Return payload options:
-		1. { "cosmosConnectivity": "ok" }
+		1. { 
+				"cosmosConnectivity": "ok",
+				"provisionedThroughput": 400
+			}
 		2. { "cosmosConnectivity": "faulty" }
 		
 	Allow Anonymous requests even if we had Authentication and Authorization in place
@@ -61,12 +57,13 @@ GET cosmos health check
 	NOTE:  if I had more time, I might make this health check more robust.  We could pass back what I've learned to be pretty useful information like:
 	
 		1. Application build version
-		2. Actual application status (sometimes an API can be "up", but 
+		2. Actual application status (sometimes an API can be "up", but we can query for faulting web app status as well)
 	
 Logger - we want trace logging!
 
 	.Net core has a solid logger, so we can use it.
 	Log freely.  When using Kusto to query application insights, these trace logs can be very telling and paint a very clear picture of what a user was doing (or attempting to accomplish).
+	Allow exceptions to rise.  Application Insights will give us more than enough information for now.
 	
 Swagger
 
@@ -76,7 +73,7 @@ Cosmos Db
 
 	Will use userId as the partition key even though we know at this point that we will query the user notes by emailAddress.  It is very common for systems to later allow users to have more than one email address for an account, so not a best practice to use emailAddress as a unique identifier.
 	
-	We will add emailAddress to the index collection in cosmos.
+	We will use default * index for now as it looks like any of the current fields could be used in a search.
 	
 	Use appSettings to hold the cosmos URL
 	
