@@ -85,7 +85,7 @@ Cosmos Db
 	I would use Azure Key Vault to store and retrieve at least the Production cosmos URL for the best security.  For now appSettings is good enough to allow us to work locally with ease and to be able to update the cosmos db URL in our Azure Function appSettings in Azure Portal.
 	
 		
-GENERATE API NOTES:
+GENERAL API NOTES:
 
 	If I had more time, I would consider use of APIM for several reasons such as:
 	
