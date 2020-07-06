@@ -1,32 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Tandem.Users.Api.Dtos;
 using Tandem.Users.Api.Models;
-using Tandem.Users.Api.Settings;
 
 namespace Tandem.Users.Api.Services
 {
     public class UserService : IUserService
     {
         private readonly ILogger<UserService> _logger;
-        private readonly CosmosDbSettings _cosmosDbSettings;
+        private readonly DbContextOptions<TandemUserContext> _dbOptions;
         // TODO: I would make this an app level constant
         private const string traceSearchString = "tandem-api-traces :: ";
 
-        public UserService(ILogger<UserService> logger, IOptions<CosmosDbSettings> cosmosDbSettings)
+        public UserService(ILogger<UserService> logger, DbContextOptions<TandemUserContext> dbOptions)
         {
             _logger = logger;
-            _cosmosDbSettings = cosmosDbSettings.Value;
+            _dbOptions = dbOptions;
         }
 
         public async Task<TandemUserDto> GetUserByEmailAddress(string emailAddress)
         {
             _logger.LogInformation(traceSearchString + "about to get user from cosmos with emailAddress: " + emailAddress);
-            using (var context = new TandemUserContext(_cosmosDbSettings))
+            using (var context = new TandemUserContext(_dbOptions))
             {
                 var tandemUser = await context.TandemUsers.Where(tu => tu.EmailAddress == emailAddress).FirstOrDefaultAsync();
                 if (tandemUser?.id == null)
@@ -43,7 +41,7 @@ namespace Tandem.Users.Api.Services
         public async Task<string> AddUser(TandemUser newUser)
         {
             _logger.LogInformation(traceSearchString + "about to add user to cosmos with emailAddress: " + newUser.EmailAddress);
-            using (var context = new TandemUserContext(_cosmosDbSettings))
+            using (var context = new TandemUserContext(_dbOptions))
             {
                 context.Database.EnsureCreated();
                 newUser.UserId = Guid.NewGuid();

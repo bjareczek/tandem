@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +23,13 @@ namespace Tandem.Users.Api
             services.AddControllers();
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IHealthService, HealthService>();
             services.Configure<CosmosDbSettings>(Configuration.GetSection(nameof(CosmosDbSettings)));
+            services.AddHealthChecks().AddDbContextCheck<TandemUserContext>();
+            services.AddDbContext<TandemUserContext>(options =>
+            {
+                options.UseCosmos(Configuration.GetValue<string>("CosmosDbSettings:EndpointUri"), Configuration.GetValue<string>("CosmosDbSettings:PrimaryKey"), Configuration.GetValue<string>("CosmosDbSettings:DatabaseId"));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,6 +44,8 @@ namespace Tandem.Users.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                // TODO: this would be a constant
+                endpoints.MapHealthChecks("/api/v1/health");
             });
         }
     }
