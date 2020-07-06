@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandem.Users.Api", "Tandem.Users.Api.csproj", "{FDC5A187-D3AE-4CD1-A181-036F7BA57BBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FBFED4AA-702D-4B00-BC8A-AD287311F06E}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandem.Users.Api.IntegrationTests", "..\Tandem.Users.Api.IntegrationTests\Tandem.Users.Api.IntegrationTests.csproj", "{95E404B6-6B77-4291-8B98-4D8908AB0A2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDC5A187-D3AE-4CD1-A181-036F7BA57BBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDC5A187-D3AE-4CD1-A181-036F7BA57BBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDC5A187-D3AE-4CD1-A181-036F7BA57BBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDC5A187-D3AE-4CD1-A181-036F7BA57BBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95E404B6-6B77-4291-8B98-4D8908AB0A2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95E404B6-6B77-4291-8B98-4D8908AB0A2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95E404B6-6B77-4291-8B98-4D8908AB0A2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95E404B6-6B77-4291-8B98-4D8908AB0A2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9257434D-313B-41AE-910F-C3E46ACF3293}
+	EndGlobalSection
+EndGlobal
