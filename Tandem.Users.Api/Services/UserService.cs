@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Azure.Cosmos;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Tandem.Users.Api.Dtos;
 using Tandem.Users.Api.Models;
@@ -41,13 +43,25 @@ namespace Tandem.Users.Api.Services
         public async Task<string> AddUser(TandemUser newUser)
         {
             _logger.LogInformation(traceSearchString + "about to add user to cosmos with emailAddress: " + newUser.EmailAddress);
-            using (var context = new TandemUserContext(_dbOptions))
+            try
             {
-                context.Database.EnsureCreated();
-                newUser.UserId = Guid.NewGuid();
-                newUser.id = "TandemUser|" + newUser.UserId.ToString();
-                context.Add(newUser);
-                await context.SaveChangesAsync();
+                using (var context = new TandemUserContext(_dbOptions))
+                {
+                    context.Database.EnsureCreated();
+                    newUser.UserId = Guid.NewGuid();
+                    newUser.id = "TandemUser|" + newUser.UserId.ToString();
+                    context.Add(newUser);
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (CosmosException cosmosException)
+            {
+                if(cosmosException.StatusCode == HttpStatusCode.Conflict)
+                {
+                    // TODO: would make this a constant
+                    return "duplicateEmail";
+                }
+                throw;
             }
             _logger.LogInformation(traceSearchString + "add user to cosmos with Id: " + newUser?.UserId);
             return newUser.UserId.ToString();

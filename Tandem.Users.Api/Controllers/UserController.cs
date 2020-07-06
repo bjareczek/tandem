@@ -40,7 +40,9 @@ namespace Tandem.Users.Api.Controllers
         public async Task<IActionResult> Post([FromBody] TandemUser newUser)
         {
             _logger.LogInformation(traceSearchString + "about to add new user with following payload: ");
-            var newUserId = await _userService.AddUser(newUser);
+            var addUserResponse = await _userService.AddUser(newUser);
+            // TODO: like in service, this response would be from a constant
+            if (addUserResponse == "duplicateEmail") return Conflict();
             _logger.LogInformation(traceSearchString + "added new user with userId: " + newUser.UserId);
             return CreatedAtRoute("GetUserByEmailAddress", new { emailAddress = newUser.EmailAddress }, new TandemUserDto(newUser));
         }
