@@ -18,6 +18,33 @@ POST Entity (first, middle, last, phone, email)
 		400 - Bad Request (verify we have proper payload and required data points)
 		409 - Conflict (duplicate emailAddress)
 		500 - Internal Error
+
+	Sample POST data for 201 successful Create:
+
+		(use header "Content-Type": "application/json")
+		{
+			"firstName": "Fred",
+			"lastName": "Wright",
+			"emailAddress": "your@email.com",
+			"phoneNumber": "847-654-6598"
+		}
+
+	Sample POST data for 400 (missing email address):
+
+		{
+			"firstName": "Fred",
+			"lastName": "Wright",
+			"phoneNumber": "847-654-6598"
+		}
+
+	Sample POST data for 409 Conflict (assuming previously mentioned 201 data above was posted already):
+
+		{
+			"firstName": "Fred",
+			"lastName": "Wright",
+			"emailAddress": "your@email.com",
+			"phoneNumber": "847-654-6598"
+		}
 		
 	Note: if I had more time to do this exercise there would be both authentication and authorization of some sort in place.
 	
@@ -36,28 +63,33 @@ GET (userId, name, phone, email)
 		200 - Ok
 		404 - Not Found (if no user for user id parameter)
 		500 - Internal Error
+
+	Sample GET uri for 200:
+
+		https://localhost:5001/api/v1/user/your@email.com
+
+	Sample GET data for 404:
+
+		https://localhost:5001/api/v1/user/no-exist@email.com
 		
 GET cosmos health check
 
 	Do a quick cosmos connectivity check.
 	
 	Possible http response codes will be:
-		200 - Ok
-		500 - Internal Error
+		status = 2 (Healthy)
+		status = 0 (Unhealthy)
 		
-	Return payload options:
-		1. { 
-				"cosmosConnectivity": "ok",
-				"provisionedThroughput": 400
-			}
-		2. { "cosmosConnectivity": "faulty" }
+	Sample GET url for health check:
+
+		https://localhost:5001/api/v1/health
 		
-	Allow Anonymous requests even if we had Authentication and Authorization in place
+	Allow Anonymous requests even if we had Authentication and Authorization in place.
+	If we decide to use or create another health check that shows more sensitive data like db name, container name, we would what authentication and maybe authorization
 	
 	NOTE:  if I had more time, I might make this health check more robust.  We could pass back what I've learned to be pretty useful information like:
 	
 		1. Application build version
-		2. Actual application status (sometimes an API can be "up", but we can query for faulting web app status as well)
 	
 Logger - we want trace logging!
 
@@ -71,7 +103,7 @@ Swagger
 	
 Cosmos Db
 
-	Will use userId as the partition key even though we know at this point that we will query the user notes by emailAddress.  It is very common for systems to later allow users to have more than one email address for an account, so not a best practice to use emailAddress as a unique identifier.
+	Considered using userId as the partition key even though we know at this point that we will query the user notes by emailAddress.  It is very common for systems to later allow users to have more than one email address for an account, so not always best practice to use emailAddress as a unique identifier.  In this case I think we're good using emailAddress.
 	
 	We will use default * index for now as it looks like any of the current fields could be used in a search.
 	
@@ -98,8 +130,9 @@ GENERAL API NOTES:
 	
 		200 - Ok
 		404 - resource not found if we get a bad user id
-		401 -- Unauthorized
-		403 -- IF we were supporting multiple roles and we implemented permissions, for which I would consider using ASP.Net core's built in User Identity object but in the BFF, closer to the UI.
+		401 - Unauthorized (if we were using authorization)
+		400 - Bad request
+		403 - IF we were supporting multiple roles and we implemented permissions, for which I would consider using ASP.Net core's built in User Identity object but in the BFF, closer to the UI.
 		500 - Internal Error
 		
 	
