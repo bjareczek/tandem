@@ -50,6 +50,7 @@ namespace Tandem.Users.Api.Services
             _logger.LogInformation(traceSearchString + "about to create cosmos container with containerId: " + _cosmosDbSettings.ContainerId);
             // TODO: I would make this partitionkey a constant
             // TODO: I would make the throughput configurable in appSettings
+            // TODO: Still need to add /EmailAddress as unique key during create if the cosmos db does not already exist
             _container = await _database.CreateContainerIfNotExistsAsync(_cosmosDbSettings.ContainerId, "/EmailAddress", 400);
         }
     }
