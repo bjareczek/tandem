@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tandem.Users.Api.Services;
+using Tandem.Users.Api.Settings;
 
 namespace Tandem.Users.Api
 {
@@ -16,15 +17,14 @@ namespace Tandem.Users.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddTransient<IUserService, UserService>();
+            services.Configure<CosmosDbSettings>(Configuration.GetSection(nameof(CosmosDbSettings)));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

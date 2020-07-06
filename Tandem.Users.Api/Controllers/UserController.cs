@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using Tandem.Users.Api.Dtos;
 using Tandem.Users.Api.Models;
 using Tandem.Users.Api.Services;
 
@@ -8,11 +9,10 @@ namespace Tandem.Users.Api.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
-        private const string userApiPath = "api/v1/user/{0}";
         // TODO: I would make this an app level constant
         private const string traceSearchString = "tandem-api-traces :: ";
 
@@ -22,23 +22,27 @@ namespace Tandem.Users.Api.Controllers
             _userService = userService;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> Get(string userId)
+        [HttpGet("{emailAddress}", Name = "GetUserByEmailAddress")]
+        public async Task<IActionResult> GetUserByEmailAddress(string emailAddress)
         {
-            _logger.LogInformation(traceSearchString + "about to get user with userId: " + userId);
-            var user = await _userService.GetUserById(userId);
-            _logger.LogInformation(traceSearchString + "about to return user with userId: " + user.UserId);
+            _logger.LogInformation(traceSearchString + "about to get user with emailAddress: " + emailAddress);
+            var user = await _userService.GetUserByEmailAddress(emailAddress);
+            if(user == null) 
+            {
+                _logger.LogInformation(traceSearchString + "did not find user with emailAddress: " + emailAddress);
+                return NotFound(); 
+            }
+            _logger.LogInformation(traceSearchString + "about to return user with emailAddress: " + user.EmailAddress);
             return Ok(user);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] User newUser)
+        public async Task<IActionResult> Post([FromBody] TandemUser newUser)
         {
             _logger.LogInformation(traceSearchString + "about to add new user with following payload: ");
             var newUserId = await _userService.AddUser(newUser);
-            var newUserUri = string.Format(userApiPath, newUserId);
-            _logger.LogInformation(traceSearchString + "added new user with uri: " + newUserUri);
-            return Ok(newUserUri);
+            _logger.LogInformation(traceSearchString + "added new user with userId: " + newUser.UserId);
+            return CreatedAtRoute("GetUserByEmailAddress", new { emailAddress = newUser.EmailAddress }, new TandemUserDto(newUser));
         }
     }
 }

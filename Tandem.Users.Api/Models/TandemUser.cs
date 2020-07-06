@@ -1,18 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tandem.Users.Api.Models
 {
-    public class User
+    public class TandemUser
     {
         [Key]
-        public string UserId { get; set; }
-
+        public Guid UserId { get; set; }
+        public string id { get; set; }
         [Required(ErrorMessage = "EmailAddress Required")]
         public string EmailAddress { get; set; }
-
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

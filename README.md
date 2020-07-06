@@ -4,7 +4,7 @@ Tandem RESTful API endpoints
 
 POST Entity (first, middle, last, phone, email)
 	
-	Generate GUID userId on POST… or PUT?
+	Generate GUID userId on POST
 	
 	URL will be:
 		
@@ -16,6 +16,7 @@ POST Entity (first, middle, last, phone, email)
 		
 		201 - Created
 		400 - Bad Request (verify we have proper payload and required data points)
+		409 - Conflict (duplicate emailAddress)
 		500 - Internal Error
 		
 	Note: if I had more time to do this exercise there would be both authentication and authorization of some sort in place.
@@ -24,16 +25,15 @@ POST Entity (first, middle, last, phone, email)
 	
 		Authorization:  At minimum if this is user data to be served up to a customer facing web app, we could do some user authorization in the BFF.  Our BFF User Identity for the logged in user will have the User Id, so we can make sure the requested user id passed in matches the User Id held in the ASP.Net Core User Identity object.
 
-GET Notes (userId, phone, email)
+GET (userId, name, phone, email)
 
 	URL will be:
 		
-		GET /tandem/api/v1/users/{id}
+		GET /tandem/api/v1/users/{emailAddress}
 			
 	Possible response codes will be:
 	
 		200 - Ok
-		400 - Bad request (verify we have proper payload and required data points)
 		404 - Not Found (if no user for user id parameter)
 		500 - Internal Error
 		
